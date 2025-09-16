@@ -10,14 +10,12 @@ import javax.swing.*;
 
 
 public class LifePanel extends JPanel implements LifeListener {
-    LifeModelReadOnly lifeModel;
-
-    private static int CELL_SIZE = 40; // px
-
     private final int rows;
     private final int cols;
     private final int width;
     private final int height;
+    private final int cellSize; // in px
+    LifeModelReadOnly lifeModel;
 
     private static final Color lineColor = new Color(200, 200, 200);
     private static final Color aliveColor = new Color(43, 220, 40);
@@ -31,7 +29,7 @@ public class LifePanel extends JPanel implements LifeListener {
 
         var cellSizeW = width / cols;
         var cellSizeH = height / rows;
-        CELL_SIZE = Math.min(cellSizeH, cellSizeW);
+        cellSize = Math.min(cellSizeH, cellSizeW);
 
         this.width = width;
         this.height = height;
@@ -40,7 +38,7 @@ public class LifePanel extends JPanel implements LifeListener {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(width, height); // e.g. 600x600
+        return new Dimension(width, height);
     }
 
     @Override
@@ -62,7 +60,7 @@ public class LifePanel extends JPanel implements LifeListener {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (lifeCellsGrid[i][j]) {
-                    g2.fillRect(j * CELL_SIZE + 1, i * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+                    g2.fillRect(j * cellSize + 1, i * cellSize + 1, cellSize - 2, cellSize - 2);
                 }
             }
         }
@@ -73,10 +71,10 @@ public class LifePanel extends JPanel implements LifeListener {
         g.fillRect(0, 0, width, height);
 
         g.setColor(lineColor);
-        for (int i = 0; i < height; i = i + CELL_SIZE) {
+        for (int i = 0; i < height; i = i + cellSize) {
             g.drawLine(i, 0, i, height);
         }
-        for (int i = 0; i < width; i = i + CELL_SIZE) {
+        for (int i = 0; i < width; i = i + cellSize) {
             g.drawLine(0, i, width, i);
         }
     }

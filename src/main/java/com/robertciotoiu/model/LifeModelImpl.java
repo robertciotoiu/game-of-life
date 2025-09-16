@@ -8,7 +8,7 @@ import java.util.List;
 
 public class LifeModelImpl implements LifeModel {
     private LifeState state;
-    private LifeRules rules;
+    private final LifeRules rules;
 
     // Reactive listeners
     // We have multiple listeners for supporting actions from multiple GUI places(mouse input, gui buttons, etc.)
@@ -20,10 +20,30 @@ public class LifeModelImpl implements LifeModel {
     }
 
     @Override
-    public void addListener(LifeListener l) { listeners.add(l); }
+    public void addListener(LifeListener l) {
+        listeners.add(l);
+    }
 
     @Override
-    public void removeListener(LifeListener l) { listeners.remove(l); }
+    public void removeListener(LifeListener l) {
+        listeners.remove(l);
+    }
+
+    @Override
+    public int getGeneration() {
+        return state.getGeneration();
+    }
+
+    @Override
+    public int getAliveCount() {
+        int totalAlive = 0;
+        for (int i = 0; i < state.getRows(); i++) {
+            for (int j = 0; j < state.getCols(); j++) {
+                if (state.getCellsGrid()[i][j]) totalAlive++;
+            }
+        }
+        return totalAlive;
+    }
 
     private void fire(LifeChangeEvent e) {
         for (LifeListener l : listeners) {
@@ -35,7 +55,8 @@ public class LifeModelImpl implements LifeModel {
     public void step() {
         // apply life rules to proceed to the next step
         state = rules.step(state);
-        fire(LifeChangeEvent.all()); // notify everyone
+        // notify everyone
+        fire(LifeChangeEvent.all());
     }
 
     @Override

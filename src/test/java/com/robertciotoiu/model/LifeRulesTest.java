@@ -18,4 +18,11 @@ class LifeRulesTest {
         // assert
         assertEquals(expectedLifeState, nextLifeState);
     }
+
+    // Out of bound tests
+
+    //A living cell with fewer than 2 living neighboring cells dies TEST
+    //A living cell with 2 or 3 living neighboring cells stays alive TEST
+    //A living cell with more than 3 living neighboring cells dies TEST
+    //A dead cell with exactly 3 living neighboring cells comes to life TEST
 }

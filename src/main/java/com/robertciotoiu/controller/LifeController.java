@@ -7,21 +7,40 @@ import javax.swing.*;
 import java.util.Random;
 
 public class LifeController {
-    private static final int REFRESH_RATE = 600; // in millis
+    private static final int REFRESH_RATE = 1200; // in millis
     private final LifeModel model;
     private final LifePanel view;
+    private final JLabel statusLabel;
+    private final Timer timer;
 
-    public LifeController(LifeModel model, LifePanel view, JRootPane rootPane) {
+    public LifeController(LifeModel model, LifePanel view, JLabel statusLabel) {
         this.model = model;
         this.view = view;
+        this.statusLabel = statusLabel;
         this.model.addListener(view);
         init();
-        Timer timer = new Timer(REFRESH_RATE, _ -> model.step());
+        timer = new Timer(REFRESH_RATE, _ -> {
+            model.step();
+            updateStatus();
+        });
+    }
+
+    /**
+     * Starts the main game loop
+     */
+    public void startGame(){
         timer.start();
+    }
+
+    private void updateStatus() {
+        int alive = model.getAliveCount();
+        int generation = model.getGeneration();
+        statusLabel.setText("Generation: " + generation + " | Alive: " + alive + " out of: " + model.getRows() * model.getCols());
     }
 
     private void init() {
         rndActivateCells();
+        updateStatus();
     }
 
     private void rndActivateCells() {
@@ -36,7 +55,7 @@ public class LifeController {
                 }
             }
         }
-        System.out.println("Active cells are: " + aliveInitCounter + " / " + model.getRows() * model.getCols());
+        System.out.println("Init active cells: " + aliveInitCounter + " / " + model.getRows() * model.getCols());
     }
 
     private static boolean shouldBeAliveWithChance(Random rnd, int aliveChancePercentage) {

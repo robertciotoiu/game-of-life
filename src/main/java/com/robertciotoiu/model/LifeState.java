@@ -11,20 +11,19 @@ public class LifeState {
     // This matrix holds current cells
     private final boolean[][] cellsGrid;
 
-//    // In this matrix we build the next step cells
-//    private final boolean[][] nextCellsGrid;
+    private int generation = 1;
 
     public LifeState(int cols, int rows) {
         this.cols = cols;
         this.rows = rows;
         cellsGrid = new boolean[rows][cols];
-//        nextCellsGrid = cellsGrid;
     }
 
     public LifeState(LifeState pastState) {
         cols = pastState.cols;
         rows = pastState.rows;
         cellsGrid = pastState.cellsGrid;
+        generation = ++pastState.generation;
     }
 
     public boolean[][] getCellsGrid() {
@@ -49,6 +48,10 @@ public class LifeState {
 
     public void setCellState(int i, int j, boolean nextCellState) {
         cellsGrid[i][j] = nextCellState;
+    }
+
+    public int getGeneration() {
+        return generation;
     }
 
     @Override

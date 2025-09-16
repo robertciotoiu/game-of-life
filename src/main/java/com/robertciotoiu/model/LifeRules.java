@@ -1,47 +1,18 @@
 package com.robertciotoiu.model;
 
 public class LifeRules {
-    private int getTotalLivingNeighbours(int cellX, int cellY, LifeState lifeState) {
-        var cellsGrid = lifeState.getCellsGrid();
-        int aliveNeighbors = 0;
 
-        if (isInBounds(cellX - 1, cellY - 1, lifeState.getRows(), lifeState.getCols()) && cellsGrid[cellX - 1][cellY - 1]) {
-            aliveNeighbors++;
+    public LifeState step(LifeState state) {
+        var nextState = new LifeState(state);
+        var cells = state.getCellsGrid();
+        for (int i = 0; i < state.getRows(); i++) {
+            for (int j = 0; j < state.getCols(); j++) {
+                var totalLivingNeighbours = getTotalLivingNeighbours(i, j, state);
+                var nextCellState = applyRules(cells[i][j], totalLivingNeighbours);
+                nextState.setCellState(i, j, nextCellState);
+            }
         }
-
-        if (isInBounds(cellX - 1, cellY, lifeState.getRows(), lifeState.getCols()) && cellsGrid[cellX - 1][cellY]) {
-            aliveNeighbors++;
-        }
-
-        if (isInBounds(cellX - 1, cellY + 1, lifeState.getRows(), lifeState.getCols()) && cellsGrid[cellX - 1][cellY + 1]) {
-            aliveNeighbors++;
-        }
-
-        if (isInBounds(cellX, cellY - 1, lifeState.getRows(), lifeState.getCols()) && cellsGrid[cellX][cellY - 1]) {
-            aliveNeighbors++;
-        }
-
-        if (isInBounds(cellX, cellY + 1, lifeState.getRows(), lifeState.getCols()) && cellsGrid[cellX][cellY + 1]) {
-            aliveNeighbors++;
-        }
-
-        if (isInBounds(cellX + 1, cellY - 1, lifeState.getRows(), lifeState.getCols()) && cellsGrid[cellX + 1][cellY - 1]) {
-            aliveNeighbors++;
-        }
-
-        if (isInBounds(cellX + 1, cellY, lifeState.getRows(), lifeState.getCols()) && cellsGrid[cellX + 1][cellY]) {
-            aliveNeighbors++;
-        }
-
-        if (isInBounds(cellX + 1, cellY + 1, lifeState.getRows(), lifeState.getCols()) && cellsGrid[cellX + 1][cellY + 1]) {
-            aliveNeighbors++;
-        }
-
-        return aliveNeighbors;
-    }
-
-    private boolean isInBounds(int x, int y, int rows, int cols) {
-        return x >= 0 && y >= 0 && x < rows && y < cols;
+        return nextState;
     }
 
     private boolean applyRules(boolean cell, int totalLivingNeighbours) {
@@ -57,16 +28,58 @@ public class LifeRules {
         return cell;
     }
 
-    public LifeState step(LifeState state) {
-        var nextState = new LifeState(state);
-        var cells = state.getCellsGrid();
-        for (int i = 0; i < cells.length; i++) {
-            for (int j = 0; j < cells.length; j++) {
-                var totalLivingNeighbours = getTotalLivingNeighbours(i, j, state);
-                var nextCellState = applyRules(cells[i][j], totalLivingNeighbours);
-                nextState.setCellState(i, j, nextCellState);
-            }
+    /**
+     * Counts the number of alive neighbors around a given cell,
+     * considering toroidal wrapping at the grid edges.
+     *
+     */
+    private int getTotalLivingNeighbours(int cellRow, int cellCol, LifeState lifeState) {
+        int aliveNeighbors = 0;
+
+        // nw
+        if (isCellAlive(cellRow - 1, cellCol - 1, lifeState)) aliveNeighbors++;
+        // n
+        if (isCellAlive(cellRow - 1, cellCol, lifeState)) aliveNeighbors++;
+        // ne
+        if (isCellAlive(cellRow - 1, cellCol + 1, lifeState)) aliveNeighbors++;
+
+        // w
+        if (isCellAlive(cellRow, cellCol - 1, lifeState)) aliveNeighbors++;
+        // e
+        if (isCellAlive(cellRow, cellCol + 1, lifeState)) aliveNeighbors++;
+
+        // sw
+        if (isCellAlive(cellRow + 1, cellCol - 1, lifeState)) aliveNeighbors++;
+        // s
+        if (isCellAlive(cellRow + 1, cellCol, lifeState)) aliveNeighbors++;
+        // se
+        if (isCellAlive(cellRow + 1, cellCol + 1, lifeState)) aliveNeighbors++;
+
+        return aliveNeighbors;
+    }
+
+    private boolean isCellAlive(int cellRow, int cellCol, LifeState lifeState) {
+        var torusCellRow = handleTorusEdge(cellRow, lifeState.getRows());
+        var torusCellCol = handleTorusEdge(cellCol, lifeState.getCols());
+        var cellsGrid = lifeState.getCellsGrid();
+
+        return cellsGrid[torusCellRow][torusCellCol];
+    }
+
+    /**
+     * If cell to be checked is out of the screen, we apply torus to keep the edges connected instead of considering
+     * out of screen cells as dead.
+     *
+     * @param cell   to be checked
+     * @param length of row or column
+     * @return the real position of the cell to be verified
+     */
+    private static int handleTorusEdge(int cell, int length) {
+        if (cell < 0) {
+            cell = length - 1;
+        } else if (cell > length - 1) {
+            cell = 0;
         }
-        return nextState;
+        return cell;
     }
 }

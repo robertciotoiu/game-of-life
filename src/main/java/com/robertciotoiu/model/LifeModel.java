@@ -9,4 +9,8 @@ public interface LifeModel extends LifeModelReadOnly {
 
     void addListener(LifeListener l);
     void removeListener(LifeListener l);
+
+    int getGeneration();
+
+    int getAliveCount();
 }
