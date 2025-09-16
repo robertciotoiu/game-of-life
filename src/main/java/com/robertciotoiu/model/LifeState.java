@@ -20,10 +20,18 @@ public class LifeState {
     }
 
     public LifeState(LifeState pastState) {
-        cols = pastState.cols;
-        rows = pastState.rows;
-        cellsGrid = pastState.cellsGrid;
-        generation = ++pastState.generation;
+        this.cols = pastState.cols;
+        this.rows = pastState.rows;
+        cellsGrid = deepCopy(pastState);
+        this.generation = pastState.generation + 1;
+    }
+
+    private static boolean[][] deepCopy(LifeState pastState) {
+        boolean[][] copy = new boolean[pastState.rows][pastState.cols];
+        for (int r = 0; r < pastState.rows; r++) {
+            System.arraycopy(pastState.cellsGrid[r], 0, copy[r], 0, pastState.cols);
+        }
+        return copy;
     }
 
     public boolean[][] getCellsGrid() {

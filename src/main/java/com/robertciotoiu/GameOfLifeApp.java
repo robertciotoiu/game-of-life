@@ -11,7 +11,7 @@ import java.awt.*;
 public class GameOfLifeApp {
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(() -> {
-            /**
+            /*
              * Create the GUI and show it.  For thread safety,
              * this method is invoked from the
              * event dispatch thread.
