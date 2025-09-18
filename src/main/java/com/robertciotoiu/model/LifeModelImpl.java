@@ -6,6 +6,30 @@ import com.robertciotoiu.api.LifeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Default in-memory implementation of the {@link LifeModel}.
+ *
+ * <p>Maintains the current {@link LifeState}, applies {@link LifeRules}
+ * to advance generations, and supports listener notification via the
+ * observer pattern.</p>
+ *
+ * <h3>Event model</h3>
+ * <ul>
+ *   <li>{@link #step()} advances the simulation by one generation
+ *       and notifies all registered {@link LifeListener}s with a
+ *       {@link com.robertciotoiu.api.LifeChangeEvent}.</li>
+ *   <li>{@link #activateCell(int, int)} and
+ *       {@link #deactivateCell(int, int)} mutate the current grid
+ *       state silently without firing events. This allows bulk
+ *       initialization or setup without flooding the GUI with repaints.</li>
+ * </ul>
+ *
+ * <p>As a result, GUI updates occur strictly once per generation step,
+ * keeping rendering consistent and efficient.</p>
+ *
+ * <p>This implementation is not thread-safe and is intended for use on
+ * the Swing Event Dispatch Thread.</p>
+ */
 public class LifeModelImpl implements LifeModel {
     private LifeState state;
     private final LifeRules rules;
@@ -51,11 +75,18 @@ public class LifeModelImpl implements LifeModel {
         }
     }
 
+    /**
+     * Advances the model by one generation.
+     *
+     * <p>Applies Conway's rules via {@link LifeRules}, replaces the current
+     * {@link LifeState}, and notifies all registered listeners with a
+     * {@link com.robertciotoiu.api.LifeChangeEvent}.</p>
+     */
     @Override
     public void step() {
-        // apply life rules to proceed to the next step
+        // Apply life rules to proceed to the next step
         state = rules.step(state);
-        // notify everyone
+        // Notify everyone
         fire(LifeChangeEvent.all());
     }
 

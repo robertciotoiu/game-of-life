@@ -3,27 +3,35 @@ package com.robertciotoiu.model;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Represents the state of the Game of Life grid at a single generation.
+ *
+ * <p>Encapsulates a 2D boolean array for cell states together with
+ * the current generation counter. Equality and hash code are defined
+ * by comparing grid contents and dimensions.</p>
+ *
+ * <p>This class is intended for use within the simulation loop.
+ * Each call to {@code step()} produces a new {@code LifeState} that
+ * replaces the previous one in the model.</p>
+ */
 public class LifeState {
-    // Cell map dimensions
-    private final int cols;
     private final int rows;
-
-    // This matrix holds current cells
+    private final int cols;
     private final boolean[][] cellsGrid;
 
     private int generation = 1;
 
-    public LifeState(int cols, int rows) {
-        this.cols = cols;
+    public LifeState(int rows, int cols) {
         this.rows = rows;
+        this.cols = cols;
         cellsGrid = new boolean[rows][cols];
     }
 
     public LifeState(LifeState pastState) {
-        this.cols = pastState.cols;
         this.rows = pastState.rows;
+        this.cols = pastState.cols;
+        this.generation = pastState.generation;
         cellsGrid = deepCopy(pastState);
-        this.generation = pastState.generation + 1;
     }
 
     private static boolean[][] deepCopy(LifeState pastState) {
@@ -62,15 +70,23 @@ public class LifeState {
         return generation;
     }
 
+    public void increaseGeneration() {
+        this.generation++;
+    }
+
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LifeState lifeState = (LifeState) o;
-        return cols == lifeState.cols && rows == lifeState.rows && Objects.deepEquals(cellsGrid, lifeState.cellsGrid);
+        return rows == lifeState.rows
+                && cols == lifeState.cols
+                && generation == lifeState.generation
+                && Objects.deepEquals(cellsGrid, lifeState.cellsGrid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cols, rows, Arrays.deepHashCode(cellsGrid));
+        return Objects.hash(rows, cols, generation, Arrays.deepHashCode(cellsGrid));
     }
 }

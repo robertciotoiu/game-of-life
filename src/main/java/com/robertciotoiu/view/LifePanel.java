@@ -2,13 +2,19 @@ package com.robertciotoiu.view;
 
 import com.robertciotoiu.api.LifeChangeEvent;
 import com.robertciotoiu.api.LifeListener;
-import com.robertciotoiu.model.LifeModelImpl;
 import com.robertciotoiu.model.LifeModelReadOnly;
 
 import java.awt.*;
 import javax.swing.*;
 
 
+/**
+ * Swing view component for rendering a Game of Life grid.
+ *
+ * <p>This panel is the "View" in an MVC setup: it observes a
+ * {@link LifeModelReadOnly} and repaints itself whenever the model
+ * fires a {@link LifeChangeEvent}.</p>
+ */
 public class LifePanel extends JPanel implements LifeListener {
     private final int rows;
     private final int cols;
@@ -21,7 +27,17 @@ public class LifePanel extends JPanel implements LifeListener {
     private static final Color aliveColor = new Color(43, 220, 40);
     private static final Color backgroundColor = new Color(235, 235, 235);
 
-    public LifePanel(LifeModelImpl model, int width, int height) {
+    /**
+     * Creates a LifePanel for the given model.
+     *
+     * @param model  the backing model to observe (must implement {@link LifeModelReadOnly})
+     * @param width  desired panel width in pixels
+     * @param height desired panel height in pixels
+     *
+     * <p>Cell size is derived automatically from the panel dimensions and
+     * the model's row/column count to preserve square cells.</p>
+     */
+    public LifePanel(LifeModelReadOnly model, int width, int height) {
         lifeModel = model;
 
         this.rows = lifeModel.getRows();
@@ -34,6 +50,12 @@ public class LifePanel extends JPanel implements LifeListener {
         this.width = width;
         this.height = height;
         setSize(new Dimension(width, height));
+    }
+
+    // Called when the model updates; trigger a repaint of the panel.
+    @Override
+    public void gridChanged(LifeChangeEvent e) {
+        repaint();
     }
 
     @Override
@@ -52,6 +74,7 @@ public class LifePanel extends JPanel implements LifeListener {
         g2.dispose();
     }
 
+    // Fill rectangles for all live cells.
     private void drawCells(Graphics2D g2) {
         var lifeCellsGrid = lifeModel.getCellsGrid();
         var rows = lifeModel.getRows();
@@ -60,12 +83,14 @@ public class LifePanel extends JPanel implements LifeListener {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (lifeCellsGrid[i][j]) {
+                    // Offsets (+1, -2) used to create grid spacing between cells.
                     g2.fillRect(j * cellSize + 1, i * cellSize + 1, cellSize - 2, cellSize - 2);
                 }
             }
         }
     }
 
+    // Paints the background and draws grid lines.
     private void drawBackground(Graphics g) {
         g.setColor(backgroundColor);
         g.fillRect(0, 0, width, height);
@@ -77,10 +102,5 @@ public class LifePanel extends JPanel implements LifeListener {
         for (int i = 0; i < width; i = i + cellSize) {
             g.drawLine(0, i, width, i);
         }
-    }
-
-    @Override
-    public void gridChanged(LifeChangeEvent e) {
-        repaint();
     }
 }

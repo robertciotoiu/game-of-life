@@ -2,6 +2,16 @@ package com.robertciotoiu.model;
 
 public class LifeRules {
 
+    /**
+     * Computes the next generation of the Game of Life from the given state.
+     *
+     * <p>This method applies Conway's rules simultaneously to every cell in
+     * the grid and returns a new {@link LifeState}. The input state is not
+     * modified.</p>
+     *
+     * @param state the current generation
+     * @return a new {@link LifeState} representing the next generation
+     */
     public LifeState step(LifeState state) {
         var nextState = new LifeState(state);
         var cells = state.getCellsGrid();
@@ -12,6 +22,7 @@ public class LifeRules {
                 nextState.setCellState(i, j, nextCellState);
             }
         }
+        nextState.increaseGeneration();
         return nextState;
     }
 
@@ -68,10 +79,10 @@ public class LifeRules {
 
     /**
      * If cell to be checked is out of the screen, we apply torus to keep the edges connected instead of considering
-     * out of screen cells as dead.
+     * out of screen cells as dead cells.
      *
-     * @param cell   to be checked
-     * @param length of row or column
+     * @param cell  cell to be checked
+     * @param length length of the row or the column
      * @return the real position of the cell to be verified
      */
     private static int handleTorusEdge(int cell, int length) {

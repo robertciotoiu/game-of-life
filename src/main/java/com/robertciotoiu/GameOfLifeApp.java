@@ -9,15 +9,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameOfLifeApp {
+    private static final int INITIAL_ALIVE_CHANCE_PERCENTAGE = 15;
+
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(() -> {
-            /*
-             * Create the GUI and show it.  For thread safety,
-             * this method is invoked from the
-             * event dispatch thread.
-             */
-            var model = new LifeModelImpl(20, 20);
-            var grid  = new LifePanel(model, 600, 600);
+            var lifeModel = new LifeModelImpl(20, 20);
+            var lifeView = new LifePanel(lifeModel, 600, 600);
 
             // Define status bar
             var statusLabel = new JLabel("Generation: 0 | Alive: 0");
@@ -30,12 +27,15 @@ public class GameOfLifeApp {
             // Add status bar
             frame.add(statusLabel, BorderLayout.NORTH);
             // Add Game of Life Panel
-            frame.add(grid, BorderLayout.CENTER);
+            frame.add(lifeView, BorderLayout.CENTER);
             frame.pack(); // adjusts frame to fit LifePanel’s preferred size
             frame.setLocationRelativeTo(null); // center on screen
             frame.setVisible(true);
 
-            var lifeController = new LifeController(model, grid, statusLabel);
+            // Initialize the cell world randomly
+            LifeInitializer.rndActivateCells(lifeModel, INITIAL_ALIVE_CHANCE_PERCENTAGE);
+
+            var lifeController = new LifeController(lifeModel, lifeView, statusLabel);
             lifeController.startGame();
         });
     }
