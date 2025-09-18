@@ -4,12 +4,12 @@
 
     <groupId>com.robertciotoiu</groupId>
     <artifactId>game-of-life</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <scm>
         <connection>scm:git:https://github.com/robertciotoiu/game-of-life.git</connection>
         <developerConnection>scm:git:git@github.com:robertciotoiu/game-of-life.git</developerConnection>
         <url>https://github.com/robertciotoiu/game-of-life</url>
-        <tag>v1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
