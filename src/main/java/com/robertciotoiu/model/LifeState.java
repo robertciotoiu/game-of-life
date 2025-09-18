@@ -76,17 +76,13 @@ public class LifeState {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LifeState lifeState = (LifeState) o;
-        return rows == lifeState.rows
-                && cols == lifeState.cols
-                && generation == lifeState.generation
-                && Objects.deepEquals(cellsGrid, lifeState.cellsGrid);
+        return cols == lifeState.cols && rows == lifeState.rows && Objects.deepEquals(cellsGrid, lifeState.cellsGrid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rows, cols, generation, Arrays.deepHashCode(cellsGrid));
+        return Objects.hash(cols, rows, Arrays.deepHashCode(cellsGrid));
     }
 }

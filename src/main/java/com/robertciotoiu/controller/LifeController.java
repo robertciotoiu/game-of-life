@@ -24,7 +24,7 @@ public class LifeController {
         this.view = view;
         this.statusLabel = statusLabel;
         this.model.addListener(view);
-        timer = new Timer(REFRESH_RATE, _ -> {
+        timer = new Timer(REFRESH_RATE, e -> {
             model.step();
             updateStatus();
         });
